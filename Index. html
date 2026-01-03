@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ساعة رقمية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(45deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .clock-container {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            color: #00ff88;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .time {
+            font-size: 5rem;
+            color: white;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 20px #00ffff;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .date {
+            font-size: 1.8rem;
+            color: #ffcc00;
+            margin: 20px 0;
+            text-shadow: 0 0 10px #ffcc00;
+        }
+        
+        .greeting {
+            font-size: 1.5rem;
+            color: #ff6b9d;
+            margin: 25px 0;
+            text-shadow: 0 0 10px #ff6b9d;
+        }
+        
+        .info {
+            color: #aaa;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .time {
+                font-size: 3.5rem;
+            }
+            
+            .date {
+                font-size: 1.5rem;
+            }
+            
+            .clock-container {
+                padding: 25px;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <h1>⏰ الساعة الرقمية</h1>
+        
+        <div class="time" id="time">00:00:00</div>
+        
+        <div class="date" id="date">السبت ١ يناير ٢٠٢٣</div>
+        
+        <div class="greeting" id="greeting">صباح الخير! ☀️</div>
+        
+        <div class="info">
+            <p>المشروع يعرض الوقت والتاريخ مباشرة من جهازك</p>
+            <p>التحديث التلقائي كل ثانية</p>
+        </div>
+    </div>
+
+    <script>
+        // عناصر DOM
+        const timeElement = document.getElementById('time');
+        const dateElement = document.getElementById('date');
+        const greetingElement = document.getElementById('greeting');
+        
+        // أسماء الأشهر والأيام بالعربية
+        const months = [
+            'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+            'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+        ];
+        
+        const days = [
+            'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 
+            'الخميس', 'الجمعة', 'السبت'
+        ];
+        
+        // تحديث الوقت
+        function updateTime() {
+            const now = new Date();
+            
+            // الوقت
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            
+            // تنسيق الوقت (إضافة صفر إذا كان رقم واحد)
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // التاريخ
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            dateElement.textContent = `${day} ${date} ${month} ${year}`;
+            
+            // التحية
+            updateGreeting(hours);
+            
+            // تأثير النبض للثواني
+            timeElement.classList.toggle('pulse');
+        }
+        
+        // تحديث التحية حسب الوقت
+        function updateGreeting(hours) {
+            if (hours < 12) {
+                greetingElement.textContent = 'صباح الخير! ☀️';
+                greetingElement.style.color = '#ffcc00';
+            } else if (hours < 18) {
+                greetingElement.textContent = 'مساء الخير! 🌤️';
+                greetingElement.style.color = '#ff9966';
+            } else {
+                greetingElement.textContent = 'مساء الخير! 🌙';
+                greetingElement.style.color = '#9966ff';
+            }
+        }
+        
+        // بدء الساعة
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // تأثير دخول الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 1s';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
